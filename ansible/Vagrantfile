@@ -26,5 +26,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
    config.vm.define "database" do |db|
        db.vm.network :private_network, ip: "192.168.1.20"
    end
-   
+
 end
