@@ -24,7 +24,7 @@
 - name: Remove frontend node_modules
   file: path="{{ node_apps_location }}/frontend/node_modules"  state=absent
 
-- name: Remove frontend node_modules
+- name: Remove backend node_modules
   file: path="{{ node_apps_location }}/backend/node_modules"  state=absent
 
 - name: replace line
