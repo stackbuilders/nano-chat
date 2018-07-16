@@ -19,7 +19,7 @@ vagrant up
 Check if everything is working fine in vagrant
 
 ```bash
-vagrant up
+vagrant status
 ```
 
 Enter to one of the machines
