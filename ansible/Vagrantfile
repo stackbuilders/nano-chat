@@ -18,7 +18,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
    # Application server 1.
    config.vm.define "webserver" do |app|
-       app.vm.network :forwarded_port, guest: 80, host: 8080
        app.vm.network :private_network, ip: "192.168.1.10"
    end
 

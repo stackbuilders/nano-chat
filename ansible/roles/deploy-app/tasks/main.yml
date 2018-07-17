@@ -27,17 +27,13 @@
 - name: Remove backend node_modules
   file: path="{{ node_apps_location }}/backend/node_modules"  state=absent
 
-- name: replace line
-  lineinfile: 
-    dest: "{{ node_apps_location }}/frontend/src/config.js" 
-    regexp: 'serverURL: \"http://localhost:3001\"' 
-    line: '  serverURL: "http://localhost:8080"'
-    backrefs: yes
-
 - name: Check list of running Node.js apps.
   command: forever list
   register: forever_list
   changed_when: false
+
+- name: Stop all forever instances
+  command: forever stopall
 
 - name: Start example Node.js app.
   command: "make run -C {{ node_apps_location }}"
