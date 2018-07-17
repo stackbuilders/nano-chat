@@ -32,8 +32,9 @@
   register: forever_list
   changed_when: false
 
+- name: Stop all forever instances
+  command: forever stopall
+
 - name: Start example Node.js app.
   command: "make run -C {{ node_apps_location }}"
   when: "forever_list.stdout.find(node_apps_location + '/src/app.js') == -1"
-  notify:
-     - restart nginx

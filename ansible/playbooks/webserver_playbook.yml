@@ -25,7 +25,9 @@
       nginx_sites:
         default:
          - listen 80
-         - location / { proxy_pass http://localhost:3001; }  
+         - location / { proxy_pass http://localhost:3001; }
+      notify:
+      - restart nginx
      
     - role: geerlingguy.nodejs
       tag: nodejs
