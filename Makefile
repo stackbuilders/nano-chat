@@ -4,7 +4,12 @@ all:
 
 .PHONY: all
 
-run: all
+start: all
 	cd backend && PG_CONN_STRING=blah forever start src/app.js
 
-.PHONY: run
+.PHONY: start
+
+stop:
+	forever stop backend/src/app.js
+
+.PHONY: stop
