@@ -1,3 +1,5 @@
+![Stack Builders](sb.png)
+
 # NanoChat
 
 Simple React + Express chat web application.
