@@ -1,35 +1,80 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const crypto = require('crypto');
+const express = require('express');
 const cors = require('cors');
-
-const pgp = require('pg-promise')()
-
-if(!process.env.PG_CONN_STRING) {
-  throw new Error("PG_CONN_STRING environment variable not set");
-}
-const db = pgp(process.env.PG_CONN_STRING)
+const bodyParser = require('body-parser');
+const Sequalize = require('sequelize');
+const crypto = require('crypto');
 
 const SECRET = "SUPERSECRET";
 const MAX_MESSAGES = 100;
+const sequalize = new Sequalize('nanochat', 'nanochat', 'nanochat', {
+  host: 'localhost',
+  dialect: 'postgres',
+  pool: {
+    max: 10,
+    min: 0,
+    idle: 10000
+  }
+});
 
 const app = express();
 
-function make_auth_token(username) {
-    const hash = crypto.createHash('sha256');
-    hash.update(`${username}${SECRET}`);
-    return `${username}###${hash.digest('hex')}`;
+const User = sequalize.define('user', {
+  name: {
+    type: Sequalize.STRING,
+    field: 'name'
+  },
+  status: {
+    type: Sequalize.BOOLEAN,
+    field: 'status'
+  },
+  creationDate: {
+    type: Sequalize.DATE,
+    field: 'creation_date'
+  },
+  updateDate: {
+    type: Sequalize.DATE,
+    field: 'update_date'
+  }
+});
+
+initializeDB().catch(handleError);
+
+async function initializeDB() {
+  const allSchemas = await sequalize.showAllSchemas({logging: false}).catch(handleError);
+
+  if (!allSchemas.find((item) => item === 'nanochat')) {
+    await sequalize.createSchema('nanochat', {logging: false}).catch(handleError);
+    await User.schema('nanochat').sync({force: true}).catch(handleError);
+    await User.schema('nanochat').create({
+      name: 'Jose Luis Leon',
+      status: true,
+      creationDate: new Date()
+    }).catch(handleError);
+  }
 }
 
-function verify_auth_token(token) {
-    const username = token.split("###")[0];
-    const valid_token = make_auth_token(username);
-    if (valid_token === token) {
-      return username;
-    } else {
-      return null;
-    }
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.static("../frontend/build"));
+
+app.get('/api/users', (request, response) => {
+  User.findAll({}).then((users) => {
+    response.json(users);
+  });
+});
+
+app.get('/api/users', async (request, response) => {
+  const users = await User.findAll().catch(handleError);
+  response.json(users);
+});
+
+module.exports = app;
+
+function handleError(error) {
+  console.error("ERROR HANDLER: " , error);
 }
+
+
 
 // Global array of the last messages sent by the users
 var messages = [];
@@ -38,15 +83,6 @@ function getMessages() {
   return [...messages].reverse();
 }
 
-app.use(cors());
-app.use(bodyParser.json());
-app.use(express.static("../frontend/build"));
-
-// Login endpoint
-// Params (in body as JSON):
-// - username(string): the username to use
-// Returns (as JSON):
-// - auth_token(string): a bearer token to use for this user
 app.post('/api/login',
   (req, res) => {
     const username = req.body.username;
@@ -58,54 +94,7 @@ app.post('/api/login',
   }
 );
 
-// check_db endpoint
-// This endpoints checks that the minichat can reach the database
-// No params.
-// Returns:
-// - {value: 123} if it succeeded
-// - an 500 error if it couldn't connect to the DB
-app.get('/api/check_db',
-  (req, res) => {
-    db.one('SELECT $1 AS value', 123)
-    .then(function (data) {
-      console.log('DATA:', data.value)
-      res.send(data)
-    })
-    .catch(function (error) {
-      console.log('ERROR:', error)
-      res.status(500).send("Database is unavailable");
-    })
-  }
-);
-
-// List messages endpoint
-// This endpoints gets the last list of messages
-// Requires authentication: bearer token
-// No params.
-// Returns:
-// - a list of {sender: username(string), message: message(string)}
-// - an 401 error if you aren't authenticated, or the token is wrong
-app.get('/api/messages',
-  (req, res) => {
-    const token = req.headers.authorization.split(" ")[1];
-    const user = verify_auth_token(token);
-    if (user === null) {
-      return res.status(401).send("Not authenticated.");
-    }
-    res.send(getMessages());
-  }
-);
-
-// Post a message endpoint as the user you are currently authenticated.
-// This endpoints posts a new message
-// Requires authentication: bearer token
-// Params (in body as JSON):
-// - message(string): the message to post
-// Returns:
-// - The current list of messages (see the List messages endpoint)
-// - an 401 error if you aren't authenticated, or the token is wrong
-app.post('/api/messages',
-  (req, res) => {
+app.post('/api/messages', (req, res) => {
     const token = req.headers.authorization.split(" ")[1];
     const user = verify_auth_token(token);
     if (user === null) {
@@ -121,5 +110,18 @@ app.post('/api/messages',
   }
 );
 
-const PORT = 3001;
-app.listen(PORT, () => console.log(`Chat app listening on port ${PORT}!`));
+function verify_auth_token(token) {
+  const username = token.split("###")[0];
+  const valid_token = make_auth_token(username);
+  if (valid_token === token) {
+    return username;
+  } else {
+    return null;
+  }
+}
+
+function make_auth_token(username) {
+  const hash = crypto.createHash('sha256');
+  hash.update(`${username}${SECRET}`);
+  return `${username}###${hash.digest('hex')}`;
+}
