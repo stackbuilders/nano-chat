@@ -1,7 +1,7 @@
-const Sequelize = require('sequelize');
-const sequelizeConn = require('../src/core/sequalizeConn');
+import Sequelize from 'sequelize';
+import sequelizeConn from 'Core/sequelizeConn'
 
-const User = sequelizeConn.define('user', {
+export default sequelizeConn.define('user', {
     id: {
         allowNull: false,
         type: Sequelize.INTEGER,
@@ -30,5 +30,3 @@ const User = sequelizeConn.define('user', {
     underscore: true,
     tableName: 'user'
 });
-
-module.exports = User;

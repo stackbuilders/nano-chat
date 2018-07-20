@@ -1,16 +1,16 @@
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const crypto = require('crypto');
-const User = require('../models/User');
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import crypto from 'crypto';
+import User from '../models/User';
 
 const SECRET = "SUPERSECRET";
 const MAX_MESSAGES = 100;
 const app = express();
 
-initializeDB().catch(handleError);
+//addTestUser().catch(handleError);
 
-async function initializeDB() {
+async function addTestUser() {
     const name = 'Test User';
     await User.schema('nanochat').create({ name }).catch(handleError);
 }
@@ -77,4 +77,4 @@ function make_auth_token(username) {
     return `${username}###${hash.digest('hex')}`;
 }
 
-module.exports = app;
+export default app;
