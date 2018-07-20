@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import crypto from 'crypto';
-import User from '../models/User';
+import User from 'Models/User';
 
 const SECRET = "SUPERSECRET";
 const MAX_MESSAGES = 100;

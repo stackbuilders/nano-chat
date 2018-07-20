@@ -3,7 +3,8 @@
         "baseUrl": ".",
         "paths": {
             "*": ["./*"],
-            "Core/*": ["./src/core/*"]
+            "Core/*": ["./src/core/*"],
+            "Models/*": ["./models/*"]
         }
     },
     "exclude": [

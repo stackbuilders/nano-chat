@@ -1,6 +1,6 @@
 'use strict';
 
-export default {
+module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createSchema('nanochat');
   },
