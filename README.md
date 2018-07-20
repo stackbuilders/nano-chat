@@ -37,6 +37,8 @@ following command:
 make stop
 ```
 
+To test the endpoint `/api/users` open `http://localhost:3001/api/users` in your browser. The data should be presented in JSON format.
+
 ## License
 
 MIT, see the [LICENSE](LICENSE) file.
