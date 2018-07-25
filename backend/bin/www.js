@@ -1,11 +1,11 @@
 require('babel-register');
 
+if (!process.env.DB_CONN_NANOCHAT) {
+  console.info("BEWARE: Enviroment variable 'DB_CONN_NANOCHAT' is not set!");
+}
+
 const http = require('http');
 const app = require("../src/app").default;
-
-if (!process.env.DB_CONN_NANOCHAT) {
-  throw new Error("FATAL: Enviroment variable 'DB_CONN_NANOCHAT' is not set!");
-}
 
 const PORT = '3001';
 app.set('port', PORT)

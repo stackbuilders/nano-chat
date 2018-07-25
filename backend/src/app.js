@@ -12,7 +12,7 @@ const app = express();
 
 async function addTestUser() {
   const name = 'Test User';
-  await User.schema('nanochat').create({ name }).catch(handleError);
+  await User.create({ name }).catch(handleError);
 }
 
 app.use(cors());
@@ -20,8 +20,13 @@ app.use(bodyParser.json());
 app.use(express.static("../frontend/build"));
 
 app.get('/api/users', async (request, response) => {
-  const users = await User.findAll().catch(handleError);
-  response.json(users);
+  if (User) {
+    const users = await User.findAll().catch(handleError);
+    response.json(users);
+    return;
+  }
+  
+  response.json([]);
 });
 
 function handleError(error) {

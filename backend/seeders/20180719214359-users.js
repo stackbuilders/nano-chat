@@ -16,12 +16,11 @@ module.exports = {
         updatedAt: now
       }
     ], {
-      schema: 'nanochat',
       timestamps: true
     });
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('user', null, {schema: 'nanochat'});
+    return queryInterface.bulkDelete('user', null);
   }
 };

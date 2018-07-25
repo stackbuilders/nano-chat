@@ -26,7 +26,6 @@ module.exports = {
         allowNull: false
       }
     }, {
-      schema: 'nanochat',
       timestamps: true,
       underscore: true,
       tableName: 'user'
@@ -34,6 +33,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('users', { schema: 'nanochat' });
+    return queryInterface.dropTable('users');
   }
 };

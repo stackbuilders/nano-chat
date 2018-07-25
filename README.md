@@ -38,9 +38,10 @@ Install [sequelize-cli][sequelize-cli] globally:
 npm install -g sequelize-cli
 ```
 
-Run the migrations and the seeders:
+Run the migrations and the seeders from the root of the backend project:
 
 ```
+cd backend/
 sequelize db:migrate
 sequelize db:seed:all
 ```
@@ -51,9 +52,10 @@ Install [forever][forever] globally:
 npm install -g forever
 ```
 
-Install the dependencies, and start the application:
+Install the dependencies, and start the application from the root of the project:
 
 ```
+cd ..
 make start
 ```
 
