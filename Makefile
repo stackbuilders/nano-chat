@@ -5,11 +5,11 @@ all:
 .PHONY: all
 
 start: all
-	cd backend && PG_CONN_STRING=blah forever start src/app.js
+	cd backend && PG_CONN_STRING=blah forever start bin/www.js
 
 .PHONY: start
 
 stop:
-	forever stop backend/src/app.js
+	forever stop backend/bin/www.js
 
 .PHONY: stop
